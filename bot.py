@@ -24,8 +24,9 @@ class MyClient(discord.Client):
         if message.content.startswith('!hello'):
             await message.channel.send('Hello!')
             
-    async def on_message(ctx):
-        await ctx.channel.send('Card data here!')
+    async def on_message(message):
+        if message.content.startswith('/card'):
+            await message.channel.send('Card!')
         
         
 
