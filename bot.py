@@ -23,10 +23,6 @@ class MyClient(discord.Client):
 
         if message.content.startswith('!hello'):
             await message.channel.send('Hello!')
-            
-    async def on_message(message):
-        if message.content.startswith('/card'):
-            await message.channel.send('Card!')
         
         
 
@@ -58,4 +54,4 @@ async def info(ctx):
     await ctx.send(f"In server: {ctx.guild.name}")
     
         
-bot.run(TOKEN)
+client.run(TOKEN)
