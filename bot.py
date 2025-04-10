@@ -9,49 +9,27 @@ API_URL = "http://localhost:8000/get_card_image"
 load_dotenv() 
 TOKEN = os.getenv("DISCORD_TOKEN") 
 
-bot = commands.Bot(command_prefix='/', intents=discord.Intents.default())
-
-CARD_CHANNEL_ID = 1359304823903748156
-
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print(f'Logged in as {self.user}')
-
-    async def on_message(self, message):
-        if message.author == self.user:
-            return
-
-        if message.content.startswith('!hello'):
-            await message.channel.send('Hello!')
-        
-        
-
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = MyClient(intents=intents)
+bot = commands.Bot(command_prefix='/', intents=intents)
 
+CARD_CHANNEL_ID = 1359304823903748156
+
+@bot.command()
+async def info(ctx):
+    await ctx.send(f"Command used by: {ctx.author}")
 
 @bot.command(name="cardsearch")
-async def on_message(ctx):
-    message = ctx.message 
-    if message.channel.id != CARD_CHANNEL_ID:
+async def card_search(ctx, *, card_name: str):
+    if ctx.channel.id != CARD_CHANNEL_ID:
         return
     
-    if message.author == bot.user:
-        return
+    response = requests.get(API_URL, params={"card_name": card_name})
+    
+    if response.status_code == 200:
+        await ctx.send(response.text)
+    else:
+        await ctx.send("Error retrieving card data.")
 
-    if message.content.startswith('/card'):
-        card_name = message.content[len("/card "):].strip()
-        response = requests.get(API_URL, params={"card_name": card_name})
-        await ctx.channel.send(response)
-        await ctx.channel.send('Card data here!')
-     
-@bot.command()   
-async def info(ctx):
-    await ctx.send(f"Command usd by: {ctx.author}")
-    await ctx.send(f"In channel: {ctx.channel.name}")
-    await ctx.send(f"In server: {ctx.guild.name}")
-    
-        
-client.run(TOKEN)
+bot.run(TOKEN)
