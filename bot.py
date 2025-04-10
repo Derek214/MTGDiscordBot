@@ -20,10 +20,8 @@ CARD_CHANNEL_ID = 1359304823903748156
 async def info(ctx):
     await ctx.send(f"Command used by: {ctx.author}")
 
-@bot.command(name="cardsearch")
-async def card_search(ctx, *, card_name: str):
-    if ctx.channel.id != CARD_CHANNEL_ID:
-        return
+@bot.command(name="card")
+async def card(ctx, *, card_name: str):
     
     response = requests.get(API_URL, params={"card_name": card_name})
     
