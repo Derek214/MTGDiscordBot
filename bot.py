@@ -64,6 +64,10 @@ async def builddeck(ctx, *, deck_name: str):
     await ctx.send(f"Please send the decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
     msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=25.0)
     decklist_message = msg.content
-    await ctx.send(f"Decklist received: {decklist_message}")
-    await ctx.send(f"Deck '{deck_name}' created!")
+    #API Call To Create Deck
+    response = requests.post(API_URL + "/build_deck", json={"deck_name": deck_name, "cards": decklist_message, "creator_name": str(ctx.author)})
+    if response.status_code == 200:
+        await ctx.send(f"Deck '{deck_name}' created successfully!")
+    else:
+        await ctx.send("Error creating deck.")
 bot.run(TOKEN)
