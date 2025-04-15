@@ -90,7 +90,7 @@ async def view_deck(deck_name: str):
     return {image_urls}
 
 @app.put("/build_deck")
-async def view_deck(deck_name: str, creator_name: str, cards: str):
+async def view_deck(deck_name: str, cards: str, creator_name: str):
     existing_deck = session.query(Deck).filter(Deck.deck_name == deck_name).first()
     
     if existing_deck:
