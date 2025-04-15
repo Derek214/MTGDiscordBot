@@ -2,19 +2,9 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from sqlalchemy import create_engine, select, or_
-from sqlalchemy.orm import sessionmaker
 import requests
 
 API_URL = "http://localhost:8000"
-
-# Database setup
-SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-session_factory = sessionmaker(bind=engine)
-
-# Initialize the database session
-session = session_factory()
 
 # from models import Base
 
@@ -67,4 +57,13 @@ async def random(ctx):
     else:
         await ctx.send("Error retrieving random card.")
 
+
+@bot.command(name="builddeck")
+async def builddeck(ctx, *, deck_name: str):
+    # Wait for Next Sent Message
+    await ctx.send(f"Please send the decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
+    msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=25.0)
+    decklist_message = msg.content
+    await ctx.send(f"Decklist received: {decklist_message}")
+    await ctx.send(f"Deck '{deck_name}' created!")
 bot.run(TOKEN)
