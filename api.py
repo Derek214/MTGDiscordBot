@@ -12,7 +12,10 @@ Base.metadata.create_all(bind=engine)
 session_factory = sessionmaker(bind=engine)
 session = session_factory()
 
-
+class DeckRequest(BaseModel):
+    creator_name: str
+    deck_name: str
+    cards: str
 
 app = FastAPI()
 DB_PATH = "MagicTheGathering.db"
@@ -88,25 +91,22 @@ async def view_deck(deck_name: str):
     return {image_urls}
 
 @app.post("/build_deck")
-async def view_deck(deck_name: str, cards: str, creator_name: str):
-    existing_deck = session.query(Deck).filter(Deck.deck_name == deck_name).first()
-    
+async def build_deck(deck: DeckRequest):
+    existing_deck = session.query(Deck).filter(Deck.deck_name == deck.deck_name).first()
+
     if existing_deck:
-        # Update the existing deck
-        existing_deck.creator_name = creator_name
-        existing_deck.cards = cards
+        existing_deck.creator_name = deck.creator_name
+        existing_deck.cards = deck.cards
     else:
-        # Create a new deck
         new_deck = Deck(
-            deck_name=deck_name,
-            creator_name=creator_name,
-            cards=cards
+            creator_name=deck.creator_name,
+            deck_name=deck.deck_name,
+            cards=deck.cards
         )
         session.add(new_deck)
 
-    # Commit the changes
     session.commit()
 
     return {
-        "message": "Deck saved successfully"
+        "message": "Deck updated successfully" if existing_deck else "Deck created successfully"
     }
