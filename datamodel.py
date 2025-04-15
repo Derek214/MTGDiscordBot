@@ -1,4 +1,16 @@
-class Deck:
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class Deck(Base):
+    __tablename__ = 'decks'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    creator_name = Column(String, nullable=False)
+    deck_name = Column(String, nullable=False)
+    cards = Column(String, nullable=False)
+
     def __init__(self, creator_name: str, deck_name: str, cards: str, deck_id: int = None):
         self.id = deck_id
         self.creator_name = creator_name
@@ -6,4 +18,4 @@ class Deck:
         self.cards = cards
 
     def __repr__(self):
-        return f"Deck(id={self.id}, creator='{self.creator_name}', name='{self.deck_name}')"
+        return f"Deck(id={self.id}, creator='{self.creator_name}', name='{self.deck_name}', cards='{self.cards})"
