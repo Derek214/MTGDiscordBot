@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from datamodel import Base, Deck
 
 # Database setup
-SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./=decks.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 Base.metadata.create_all(bind=engine)
 session_factory = sessionmaker(bind=engine)
