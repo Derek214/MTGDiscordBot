@@ -33,18 +33,14 @@ async def card(ctx, *, card_name: str):
         await ctx.send("Error retrieving card data.")
 
 @bot.command(name="deckview")
-async def deckview(ctx, *, deckname: str):
-    # Split the decklist into individual card names
-    #decklist = session.execute(select(Deck).where(Deck.name == deckname)).scalar_one_or_none()
-    decklist = "Card 1 {Card 2 {Card 3"  # Placeholder for actual decklist retrieval
-    if not decklist:
-        await ctx.send("Deck not found.")
-        return
-    card_names = decklist.split("{")
-    for card in card_names:
-        card = card.strip()
-        if card:
-            await ctx.send(f"{card}")
+async def deckview(ctx, *, deck_name: str):
+    response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
+    
+    if response.status_code == 200:
+        await ctx.send(response.text)
+    else:
+        await ctx.send("Error retrieving card data.")
+    
 
 @bot.command(name="random")
 async def random(ctx):

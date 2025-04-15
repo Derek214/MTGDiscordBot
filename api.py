@@ -71,7 +71,7 @@ async def view_deck(deck_name: str):
     if not deck:
         raise HTTPException(status_code=404, detail="Deck not found")
 
-    card_names = [name.strip() for name in deck.cards.split(",") if name.strip()]
+    card_names = [name.strip() for name in deck.cards.split("{") if name.strip()]
     image_urls = []
 
     for name in card_names:
@@ -88,3 +88,27 @@ async def view_deck(deck_name: str):
             })
 
     return {image_urls}
+
+@app.put("/build_deck")
+async def view_deck(deck_name: str, creator_name: str, cards: str):
+    existing_deck = session.query(Deck).filter(Deck.deck_name == deck_name).first()
+    
+    if existing_deck:
+        # Update the existing deck
+        existing_deck.creator_name = creator_name
+        existing_deck.cards = cards
+    else:
+        # Create a new deck
+        new_deck = Deck(
+            deck_name=deck_name,
+            creator_name=creator_name,
+            cards=cards
+        )
+        session.add(new_deck)
+
+    # Commit the changes
+    session.commit()
+
+    return {
+        "message": "Deck saved successfully"
+    }
