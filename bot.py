@@ -37,8 +37,9 @@ async def deckview(ctx, *, deck_name: str):
     response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
     
     if response.status_code == 200:
-        for card in response.json():
-            await ctx.send(f"{card}")   
+        image_url = response.json().get("cards")
+        for image in image_url:
+            await ctx.send(f"{image}")   
     else:
         await ctx.send("Error retrieving card data.")
     
