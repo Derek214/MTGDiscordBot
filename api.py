@@ -88,7 +88,7 @@ async def view_deck(deck_name: str):
                 "image_url": None,
             })
 
-    return {image_urls}
+    return {"cards": image_urls}
 
 @app.post("/build_deck")
 async def build_deck(deck: DeckRequest):
