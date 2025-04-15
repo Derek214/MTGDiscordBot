@@ -1,7 +1,20 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
-import sqlite3
+from sqlalchemy import create_engine, select, or_
+from sqlalchemy.orm import sessionmaker
+from datamodel import Deck
+
+# Database setup
+SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+session_factory = sessionmaker(bind=engine)
+
+# Initialize the database session
+session = session_factory()
+
+# from models import Base
+
 
 app = FastAPI()
 DB_PATH = "MagicTheGathering.db"
@@ -52,24 +65,26 @@ async def random():
         raise HTTPException(status_code=404, detail=image_url)
     return {"image_url": image_url}
 
-"""
 @app.get("/view_deck")
 async def view_deck(deck_name: str):
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
+    deck = session.query(Deck).filter(Deck.deck_name == deck_name).first()
+    if not deck:
+        raise HTTPException(status_code=404, detail="Deck not found")
 
-        cursor.execute("SELECT deck_name, cards FROM decks WHERE LOWER(deck_name) = LOWER(?)", (deck_name,))
-        row = cursor.fetchone()
-        conn.close()
+    card_names = [name.strip() for name in deck.cards.split(",") if name.strip()]
+    image_urls = []
 
-        if row:
-            deck_name, cards = row
-            card_list = [card.strip() for card in cards.split(',')]
-            return {"deck_name": deck_name, "cards": card_list}
+    for name in card_names:
+        image_url = search_card(name)
+        if "error" not in image_url:
+            image_urls.append({
+                "card_name": name,
+                "image_url": image_url
+            })
         else:
-            raise HTTPException(status_code=404, detail="Deck not found")
+            image_urls.append({
+                "card_name": name,
+                "image_url": None,
+            })
 
-    except sqlite3.Error as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-"""
+    return {image_urls}

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, select, or_
 from sqlalchemy.orm import sessionmaker
 import requests
 
-API_URL = "http://localhost:8000/get_card_image"
+API_URL = "http://localhost:8000"
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
@@ -35,7 +35,7 @@ async def info(ctx):
 @bot.command(name="card")
 async def card(ctx, *, card_name: str):
     
-    response = requests.get(API_URL, params={"card_name": card_name})
+    response = requests.get(API_URL + "/get_card_image", params={"card_name": card_name})
     
     if response.status_code == 200:
         await ctx.send(response.text)
