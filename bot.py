@@ -94,7 +94,7 @@ async def deletedeck(ctx, *, deck_name: str):
                         await ctx.send("Error deleting deck.")
                 else:
                     await ctx.send("Deck deletion canceled.")
-            except asyncio.TimeoutError:
+            except TypeError:
                 await ctx.send("No response received. Deck deletion canceled.")
         else:
             await ctx.send("You are not the creator of this deck and cannot delete it.")
@@ -126,7 +126,7 @@ async def botinfo(ctx):
     commandops = [
         "/card <card_name> - Get card image",
         "/deckview <deck_name> - View deck",
-        "/random - Get a random card",
+        "/randomcard - Get a random card",
         "/newcomideas <colorset> <creaturetype>- Sends new ideas for commander based on colorset and creature type",
         "/builddeck <deck_name> - Build a new deck",
         "/editdeck <deck_name> - Edit deck if you created it",
