@@ -5,7 +5,6 @@ from sqlalchemy import create_engine, select, or_
 from sqlalchemy.orm import sessionmaker
 from datamodel import Base, Deck
 import random
-from random import choice
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
@@ -62,7 +61,7 @@ async def get_card_image(card_name: str):
     return {"image_url": image_url}
 
 @app.get("/random")
-async def random():
+async def random_card():
     image_url = get_random_card()
     if 'error' in image_url:
         raise HTTPException(status_code=404, detail=image_url)
@@ -101,7 +100,7 @@ async def newcomideas(
     base_url = "https://api.scryfall.com/cards/search"
     
     # Build query parameters
-    query = ""
+    query = "t:legendary t:creature"
     if colorset:
         query += f" c:{colorset}"  
     if creaturetype:
@@ -118,8 +117,9 @@ async def newcomideas(
         cards = [card['name'] for card in card_data.get("data", [])]
 
         if cards:  # Ensure there's at least one match
-            num = random.randint(1, 100)
-            return cards[num]
+            card = random.choice(cards)
+            
+            return search_card(card)
         else:
             return "error: No Matching Cards Found"
 
