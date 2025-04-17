@@ -68,6 +68,17 @@ async def builddeck(ctx, *, deck_name: str):
         await ctx.send(f"Deck '{deck_name}' created successfully!")
     else:
         await ctx.send("Error creating deck.")
+        
+@bot.command(name="deletedeck")
+async def deletedeck(ctx, *, deck_name: str):
+    # Make sure user wants to delete deck
+    print
+        
+@bot.command(name="editdeck")
+async def editdeck(ctx, *, deck_name: str):
+    # Make sure user is editing the right deck
+    print
+    # Figure out a loop for editing the deck X number of times
 
 @bot.command(name="botinfo")
 async def botinfo(ctx):
@@ -75,7 +86,10 @@ async def botinfo(ctx):
         "/card <card_name> - Get card image",
         "/deckview <deck_name> - View deck",
         "/random - Get a random card",
-        "/builddeck <deck_name> - Build a new deck"
+        "/newcomideas <colorset> <creaturetype>- Sends new ",
+        "/builddeck <deck_name> - Build a new deck",
+        "/editdeck <deck_name> - Edit deck if you created it",
+        "/deletedeck <deck_name> - Delete deck if you created it"
     ]
     await ctx.send("\n".join(commandops))
 
