@@ -39,7 +39,7 @@ async def deckview(ctx, *, deck_name: str):
     if response.status_code == 200:
         image_url = response.json().get("cards")
         for image in image_url:
-            await ctx.send(f"{image}")
+            await ctx.send(f"{image}")   
     else:
         await ctx.send("Error retrieving card data.")
     
