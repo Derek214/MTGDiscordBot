@@ -37,7 +37,9 @@ async def deckview(ctx, *, deck_name: str):
     response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
     
     if response.status_code == 200:
-        await ctx.send(response.text)
+        image_url = response.json().get("cards")
+        for image in image_url:
+            await ctx.send(f"{image}")
     else:
         await ctx.send("Error retrieving card data.")
     
@@ -66,4 +68,14 @@ async def builddeck(ctx, *, deck_name: str):
         await ctx.send(f"Deck '{deck_name}' created successfully!")
     else:
         await ctx.send("Error creating deck.")
+
+@bot.command(name="botinfo")
+async def botinfo(ctx):
+    ideas = [
+        "/card <card_name> - Get card image",
+        "/deckview <deck_name> - View deck",
+        "/random - Get a random card",
+        "/builddeck <deck_name> - Build a new deck"
+    ]
+    await ctx.send("\n".join(ideas))
 bot.run(TOKEN)
