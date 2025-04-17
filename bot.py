@@ -1,6 +1,6 @@
 import os
 import discord
-from discord.ext import commands
+from discord.ext import commands, asyncio
 from dotenv import load_dotenv
 import requests
 
@@ -72,13 +72,51 @@ async def builddeck(ctx, *, deck_name: str):
 @bot.command(name="deletedeck")
 async def deletedeck(ctx, *, deck_name: str):
     # Make sure user wants to delete deck
-    print
+    # Check if the user is the creator of the deck
+    response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
+    if response.status_code == 200:
+        deck_data = response.json()
+        creator_name = deck_data.get("creator_name")
+        if ctx.author == creator_name:
+            await ctx.send(f"Are you sure you want to delete the deck '{deck_name}'? Type 'yes' to confirm.")
+            def check(m):
+                return m.author == ctx.author and m.channel == ctx.channel and m.content.lower() in ["yes", "no"]
+            try:
+                msg = await bot.wait_for('message', check=check, timeout=25.0)
+                if msg.content.lower() == "yes":
+                    response = requests.delete(API_URL + "/delete_deck", params={"deck_name": deck_name})
+                    if response.status_code == 200:
+                        await ctx.send(f"Deck '{deck_name}' deleted successfully!")
+                    else:
+                        await ctx.send("Error deleting deck.")
+                else:
+                    await ctx.send("Deck deletion canceled.")
+            except asyncio.TimeoutError:
+                await ctx.send("No response received. Deck deletion canceled.")
+        else:
+            await ctx.send("You are not the creator of this deck and cannot delete it.")
+    else:
+        await ctx.send("Error retrieving deck data.")
         
 @bot.command(name="editdeck")
 async def editdeck(ctx, *, deck_name: str):
     # Make sure user is editing the right deck
-    print
     # Figure out a loop for editing the deck X number of times
+    response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
+    if response.status_code == 200:
+        deck_data = response.json()
+        creator_name = deck_data.get("creator_name")
+        if ctx.author == creator_name:
+            await ctx.send(f"Please send the new decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
+            msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=25.0)
+            decklist_message = msg.content
+            response = requests.put(API_URL + "/edit_deck", json={"deck_name": deck_name, "cards": decklist_message})
+            if response.status_code == 200:
+                await ctx.send(f"Deck '{deck_name}' edited successfully!")
+            else:
+                await ctx.send("Error editing deck.")
+        else:
+            await ctx.send("You are not the creator of this deck and cannot edit it.")
 
 @bot.command(name="botinfo")
 async def botinfo(ctx):

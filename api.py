@@ -18,7 +18,7 @@ class DeckRequest(BaseModel):
     cards: str
 
 app = FastAPI()
-DB_PATH = "MagicTheGathering.db"
+DB_PATH = "decks.db"
     
 class CardRequest(BaseModel):
     card_name: str
