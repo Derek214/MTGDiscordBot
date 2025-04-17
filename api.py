@@ -92,19 +92,18 @@ async def view_deck(deck_name: str):
     return {"cards": image_urls}
 
 @app.get("/newcomideas")
-async def newcomideas(colorset: str, creattype: str):
+async def newcomideas(colorset: str, creaturetype: str):
     base_url = "https://api.scryfall.com/cards/search"
     
     # Build query parameters
     query = ""
     if colorset:
         query += f" c:{colorset}"  
-    if creattype:
-        query += f" t:{creattype}"
+    if creaturetype:
+        query += f" t:{creaturetype}"
         
     params = {"q": query.strip()}
 
-    # Send request
     response = requests.get(base_url, params=params)
 
     if response.status_code == 200:
