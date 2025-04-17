@@ -1,6 +1,6 @@
 import os
 import discord
-from discord.ext import commands, asyncio
+from discord.ext import commands
 from dotenv import load_dotenv
 import requests
 
@@ -38,8 +38,11 @@ async def deckview(ctx, *, deck_name: str):
     
     if response.status_code == 200:
         image_url = response.json().get("cards")
+        deck = "" 
         for image in image_url:
-            await ctx.send(f"{image}")   
+            image = image.get("image_url")
+            deck += f"{image}  "
+        await ctx.send(f"{deck}")  
     else:
         await ctx.send("Error retrieving card data.")
     
@@ -51,7 +54,7 @@ async def random(ctx):
         card_data = response.json()
         card_name = card_data.get("name")
         card_image_url = card_data.get("image_url")
-        await ctx.send(f"Random Card: {card_name}\n{card_image_url}")
+        await ctx.send(f"{card_image_url}")
     else:
         await ctx.send("Error retrieving random card.")
 
@@ -124,7 +127,7 @@ async def botinfo(ctx):
         "/card <card_name> - Get card image",
         "/deckview <deck_name> - View deck",
         "/random - Get a random card",
-        "/newcomideas <colorset> <creaturetype>- Sends new ",
+        "/newcomideas <colorset> <creaturetype>- Sends new ideas for commander based on colorset and creature type",
         "/builddeck <deck_name> - Build a new deck",
         "/editdeck <deck_name> - Edit deck if you created it",
         "/deletedeck <deck_name> - Delete deck if you created it"
@@ -132,16 +135,11 @@ async def botinfo(ctx):
     await ctx.send("\n".join(commandops))
 
 @bot.command(name="newcomideas")
-async def newcomideas(ctx,*, colorset: str, creattype: str):
-    response = requests.get(API_URL + "/newcomideas", params={"colorset": colorset , "creattype": creattype})
-    # At the Endpoint /newcomideas, send colorset and creattype as params
-    # Search Scryfall based on parameters Legendary, Colorset, And Creature Type
-    # Receive back list of cards as JSON
+async def newcomideas(ctx, colorset: str, creaturetype: str):
+    response = requests.get(API_URL + "/newcomideas", params={"colorset": colorset, "creaturetype": creaturetype})
     if response.status_code == 200:
-        card_data = response.json()
-        card_name = card_data.get("name")
-        card_image_url = card_data.get("image_url")
-        await ctx.send(f"New Ideas: {card_name}\n{card_image_url}")
+        ideas = response.json()
+        await ctx.send(f"New Commander Ideas:\n{ideas}")
     else:
-        await ctx.send("Error retrieving newcomer ideas.")
+        await ctx.send("Error retrieving new commander ideas.")
 bot.run(TOKEN)
