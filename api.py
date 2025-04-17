@@ -141,6 +141,35 @@ async def build_deck(deck: DeckRequest):
     session.commit()
 
     return {
-        "message": "Deck updated successfully" if existing_deck else "Deck created successfully"
+        "message": "Deck created successfully"
     }
     
+    
+@app.put("/edit_deck")
+async def edit_deck(deck: DeckRequest):
+    existing_deck = session.query(Deck).filter(Deck.deck_name == deck.deck_name).first()
+
+    if existing_deck:
+        existing_deck.deck_name = deck.deck_name
+        existing_deck.cards = deck.cards
+    else:
+        return "error: No deck found"
+
+    session.commit()
+    
+    return {
+        "message": "Deck updated successfully"
+    }
+    
+    
+@app.delete("/delete_deck")
+async def delete_deck(deck_name: str):
+    deck = session.query(Deck).filter(Deck.deck_name == deck_name).first()
+    
+    if not deck:
+        raise HTTPException(status_code=404, detail="Deck not found")
+    
+    session.delete(deck)
+    session.commit()
+
+    return {"message": f"Deck '{deck_name}' has been deleted successfully."}

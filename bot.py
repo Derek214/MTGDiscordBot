@@ -79,8 +79,9 @@ async def deletedeck(ctx, *, deck_name: str):
     response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
     if response.status_code == 200:
         deck_data = response.json()
-        creator_name = deck_data.get("creator_name")
-        if ctx.author == creator_name:
+        creator_name = str(deck_data.get("creator_name"))
+        await ctx.send(creator_name)
+        if str(ctx.author) == creator_name:
             await ctx.send(f"Are you sure you want to delete the deck '{deck_name}'? Type 'yes' to confirm.")
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel and m.content.lower() in ["yes", "no"]
