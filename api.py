@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, select, or_
 from sqlalchemy.orm import sessionmaker
 from datamodel import Base, Deck
 import random
+from random import choice
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
@@ -117,7 +118,8 @@ async def newcomideas(
         cards = [card['name'] for card in card_data.get("data", [])]
 
         if cards:  # Ensure there's at least one match
-            return random.choice(cards)
+            num = random.randint(1, 100)
+            return cards[num]
         else:
             return "error: No Matching Cards Found"
 
