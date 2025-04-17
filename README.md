@@ -16,4 +16,4 @@ Discord bot, API, and Database intended for use by a Magic the Gathering Command
 - editdeck
         Edit decks within the database if you are the deck creator
 - deletedeck
-        Deletes deck within the database if you are the owner. \n
+        Deletes deck within the database if you are the owner. 
