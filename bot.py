@@ -71,11 +71,25 @@ async def builddeck(ctx, *, deck_name: str):
 
 @bot.command(name="botinfo")
 async def botinfo(ctx):
-    ideas = [
+    commandops = [
         "/card <card_name> - Get card image",
         "/deckview <deck_name> - View deck",
         "/random - Get a random card",
         "/builddeck <deck_name> - Build a new deck"
     ]
-    await ctx.send("\n".join(ideas))
+    await ctx.send("\n".join(commandops))
+
+@bot.command(name="newcomideas")
+async def newcomideas(ctx,*, colorset: str, creattype: str):
+    response = requests.get(API_URL + "/newcomideas", params={"colorset": colorset , "creattype": creattype})
+    # At the Endpoint /newcomideas, send colorset and creattype as params
+    # Search Scryfall based on parameters Legendary, Colorset, And Creature Type
+    # Receive back list of cards as JSON
+    if response.status_code == 200:
+        card_data = response.json()
+        card_name = card_data.get("name")
+        card_image_url = card_data.get("image_url")
+        await ctx.send(f"New Ideas: {card_name}\n{card_image_url}")
+    else:
+        await ctx.send("Error retrieving newcomer ideas.")
 bot.run(TOKEN)
