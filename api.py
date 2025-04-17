@@ -4,6 +4,7 @@ import requests
 from sqlalchemy import create_engine, select, or_
 from sqlalchemy.orm import sessionmaker
 from datamodel import Base, Deck
+import random
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
@@ -90,6 +91,33 @@ async def view_deck(deck_name: str):
 
     return {"cards": image_urls}
 
+@app.get("/newcomideas")
+async def newcomideas(colorset: str, creattype: str):
+    base_url = "https://api.scryfall.com/cards/search"
+    
+    # Build query parameters
+    query = ""
+    if colorset:
+        query += f" c:{colorset}"  
+    if creattype:
+        query += f" t:{creattype}"
+        
+    params = {"q": query.strip()}
+
+    # Send request
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        card_data = response.json()
+        
+        # Extract names properly
+        cards = [card['name'] for card in card_data.get("data", [])]
+
+        if cards:  # Ensure there's at least one match
+            return random.choice(cards)
+        else:
+            return "error: No Matching Cards Found"
+
 @app.post("/build_deck")
 async def build_deck(deck: DeckRequest):
     existing_deck = session.query(Deck).filter(Deck.deck_name == deck.deck_name).first()
@@ -110,3 +138,4 @@ async def build_deck(deck: DeckRequest):
     return {
         "message": "Deck updated successfully" if existing_deck else "Deck created successfully"
     }
+    
