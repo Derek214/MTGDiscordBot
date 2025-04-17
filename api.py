@@ -90,7 +90,7 @@ async def view_deck(deck_name: str):
                 "image_url": None,
             })
 
-    return {"cards": image_urls}
+    return {"cards": image_urls, "creator_name": deck.creator_name}
 
 @app.get("/newcomideas")
 async def newcomideas(
