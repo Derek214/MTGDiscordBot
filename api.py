@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 import requests
 from sqlalchemy import create_engine, select, or_
@@ -92,7 +92,11 @@ async def view_deck(deck_name: str):
     return {"cards": image_urls}
 
 @app.get("/newcomideas")
-async def newcomideas(colorset: str, creaturetype: str):
+async def newcomideas(
+    colorset: str = Query(default=None),
+    creaturetype: str = Query(default=None)
+    ):
+    
     base_url = "https://api.scryfall.com/cards/search"
     
     # Build query parameters
