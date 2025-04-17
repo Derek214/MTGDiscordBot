@@ -94,7 +94,7 @@ async def deletedeck(ctx, *, deck_name: str):
                         await ctx.send("Error deleting deck.")
                 else:
                     await ctx.send("Deck deletion canceled.")
-            except asyncio.TimeoutError:
+            except TypeError:
                 await ctx.send("No response received. Deck deletion canceled.")
         else:
             await ctx.send("You are not the creator of this deck and cannot delete it.")
