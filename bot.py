@@ -50,7 +50,12 @@ async def deckview(ctx, *, deck_name: str):
 async def alldecks(ctx):
     response = requests.get(API_URL + "/all_decks")
     if response.status_code == 200:
-        for deck in response.json():
+        decks = response.json()
+        if not decks:
+            await ctx.send("No decks found.")
+            return
+        await ctx.send("Here are all the decks:")
+        for deck in decks:
             deck_name = deck.get("deck_name")
             creator_name = deck.get("creator_name")
             await ctx.send(f"Deck Name: {deck_name} | Creator: {creator_name}")
