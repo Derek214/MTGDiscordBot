@@ -45,7 +45,14 @@ async def deckview(ctx, *, deck_name: str):
         await ctx.send(f"{deck}")  
     else:
         await ctx.send("Error retrieving card data.")
-    
+
+@bot.command(name="alldecks")
+async def deckview(ctx, *, deck_name: str):
+    response = requests.get(API_URL + "/all_decks")
+    for deck in response.json():
+        deck_name = deck.get("deck_name")
+        creator_name = deck.get("creator_name")
+        await ctx.send(f"Deck Name: {deck_name} | Creator: {creator_name}")
 
 @bot.command(name="random")
 async def random(ctx):
