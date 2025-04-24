@@ -114,7 +114,9 @@ async def newcomideas(
     if colorset:
         if not color_regex.fullmatch(colorset.lower()):
             return {"error": f"Invalid color input: '{colorset}'. Must be a combination of 'w', 'u', 'b', 'r', 'g' with no repeats (e.g., 'ub', 'wrg')."}
-        query += f" indentity={colorset.lower()}"  
+        query += f" c:{colorset.lower()}" 
+        query += f" coloridentity={colorset.lower()}"
+        query += f" -color>{colorset.lower()}"  
     if creaturetype:
         query += f" t:{creaturetype}"
         
@@ -134,6 +136,14 @@ async def newcomideas(
             return search_card(card)
         else:
             return "error: No Matching Cards Found"
+        
+@app.get("/all_decks")
+async def all_decks():
+    decks = session.query(Deck).all()
+    return [
+        {"deck_name": deck.deck_name, "creator_name": deck.creator_name}
+        for deck in decks
+    ]
 
 @app.post("/build_deck")
 async def build_deck(deck: DeckRequest):
