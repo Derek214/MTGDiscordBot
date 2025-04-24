@@ -54,7 +54,6 @@ async def alldecks(ctx):
         if not decks:
             await ctx.send("No decks found.")
             return
-        await ctx.send("Here are all the decks:")
         for deck in decks:
             deck_name = deck.get("deck_name")
             creator_name = deck.get("creator_name")
@@ -93,7 +92,6 @@ async def deletedeck(ctx, *, deck_name: str):
     if response.status_code == 200:
         deck_data = response.json()
         creator_name = str(deck_data.get("creator_name"))
-        await ctx.send(creator_name)
         if str(ctx.author) == creator_name:
             await ctx.send(f"Are you sure you want to delete the deck '{deck_name}'? Type 'yes' to confirm.")
             def check(m):
