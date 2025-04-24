@@ -32,7 +32,7 @@ async def card(ctx, *, card_name: str):
     else:
         await ctx.send("Error retrieving card data.")
 
-@bot.command(name="deckview")
+@bot.command(name="viewdeck")
 async def deckview(ctx, *, deck_name: str):
     response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
     
@@ -110,11 +110,11 @@ async def editdeck(ctx, *, deck_name: str):
     if response.status_code == 200:
         deck_data = response.json()
         creator_name = deck_data.get("creator_name")
-        if ctx.author == creator_name:
+        if str(ctx.author) == str(creator_name):
             await ctx.send(f"Please send the new decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
             msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=25.0)
-            decklist_message = msg.content
-            response = requests.put(API_URL + "/edit_deck", json={"deck_name": deck_name, "cards": decklist_message})
+            decklist_message = str(msg.content)
+            response = requests.put(API_URL + "/edit_deck", json={"deck_name": deck_name, "cards": decklist_message, "creator_name": str(ctx.author)})
             if response.status_code == 200:
                 await ctx.send(f"Deck '{deck_name}' edited successfully!")
             else:

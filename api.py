@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, select, or_
 from sqlalchemy.orm import sessionmaker
 from datamodel import Base, Deck
 import random
+import time
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
@@ -77,6 +78,7 @@ async def view_deck(deck_name: str):
     image_urls = []
 
     for name in card_names:
+        time.sleep(.2)
         image_url = search_card(name)
         if "error" not in image_url:
             image_urls.append({
