@@ -63,7 +63,7 @@ async def random(ctx):
 async def builddeck(ctx, *, deck_name: str):
     # Wait for Next Sent Message
     await ctx.send(f"Please send the decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
-    msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=25.0)
+    msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=2000.0)
     decklist_message = msg.content
     #API Call To Create Deck
     response = requests.post(API_URL + "/build_deck", json={"deck_name": deck_name, "cards": decklist_message, "creator_name": str(ctx.author)})
@@ -86,7 +86,7 @@ async def deletedeck(ctx, *, deck_name: str):
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel and m.content.lower() in ["yes", "no"]
             try:
-                msg = await bot.wait_for('message', check=check, timeout=2000.0)
+                msg = await bot.wait_for('message', check=check, timeout=25.0)
                 if msg.content.lower() == "yes":
                     response = requests.delete(API_URL + "/delete_deck", params={"deck_name": deck_name})
                     if response.status_code == 200:
