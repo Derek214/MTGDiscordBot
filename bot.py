@@ -135,12 +135,12 @@ async def botinfo(ctx):
     ]
     await ctx.send("\n".join(commandops))
 
-@bot.command(name="newcomideas")
-async def newcomideas(ctx, colorset: str, creaturetype: str):
-    response = requests.get(API_URL + "/newcomideas", params={"colorset": colorset, "creaturetype": creaturetype})
+@bot.command(name="comidea")
+async def newcomideas(ctx, colorset: str = "not_there", creaturetype: str ="not_there"):
+    response = requests.get(API_URL + "/comidea", params={"colorset": colorset, "creaturetype": creaturetype})
     if response.status_code == 200:
         ideas = response.json()
-        await ctx.send(f"New Commander Ideas:\n{ideas}")
+        await ctx.send(f"New Commander Idea:\n{ideas}")
     else:
         await ctx.send("Error retrieving new commander ideas.")
 bot.run(TOKEN)

@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from datamodel import Base, Deck
 import random
 import time
+from typing import Optional
+import re
 
 # Database setup
 SQLALCHEMY_DATABASE_URL = "sqlite:///./decks.db"
@@ -21,6 +23,9 @@ class DeckRequest(BaseModel):
 
 app = FastAPI()
 DB_PATH = "decks.db"
+
+# Regex for valid color sets (e.g., w, ub, wubrg)
+color_regex = re.compile(r"^(?i)(?!.*(.).*\1)[wubrg]{1,5}$")
     
 class CardRequest(BaseModel):
     card_name: str
@@ -93,18 +98,23 @@ async def view_deck(deck_name: str):
 
     return {"cards": image_urls, "creator_name": deck.creator_name}
 
-@app.get("/newcomideas")
+@app.get("/comidea")
 async def newcomideas(
-    colorset: str = Query(default=None),
-    creaturetype: str = Query(default=None)
+    colorset: Optional[str] = Query(default=None),
+    creaturetype: Optional[str] = Query(default=None)
     ):
     
     base_url = "https://api.scryfall.com/cards/search"
     
+    if (creaturetype == "not_there"):
+        creaturetype = None
+        
     # Build query parameters
     query = "t:legendary t:creature"
     if colorset:
-        query += f" c:{colorset}"  
+        if not color_regex.fullmatch(colorset.lower()):
+            return {"error": f"Invalid color input: '{colorset}'. Must be a combination of 'w', 'u', 'b', 'r', 'g' with no repeats (e.g., 'ub', 'wrg')."}
+        query += f" indentity={colorset.lower()}"  
     if creaturetype:
         query += f" t:{creaturetype}"
         
