@@ -86,7 +86,7 @@ async def deletedeck(ctx, *, deck_name: str):
             def check(m):
                 return m.author == ctx.author and m.channel == ctx.channel and m.content.lower() in ["yes", "no"]
             try:
-                msg = await bot.wait_for('message', check=check, timeout=45.0)
+                msg = await bot.wait_for('message', check=check, timeout=2000.0)
                 if msg.content.lower() == "yes":
                     response = requests.delete(API_URL + "/delete_deck", params={"deck_name": deck_name})
                     if response.status_code == 200:
