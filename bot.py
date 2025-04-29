@@ -132,23 +132,47 @@ async def deletedeck(ctx, *, deck_name: str):
         
 @bot.command(name="editdeck")
 async def editdeck(ctx, *, deck_name: str):
-    # Make sure user is editing the right deck
-    # Figure out a loop for editing the deck X number of times
     response = requests.get(API_URL + "/view_deck", params={"deck_name": deck_name})
     if response.status_code == 200:
         deck_data = response.json()
         creator_name = deck_data.get("creator_name")
         if str(ctx.author) == str(creator_name):
-            await ctx.send(f"Please send the new decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
-            msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=25.0)
-            decklist_message = str(msg.content)
-            response = requests.put(API_URL + "/edit_deck", json={"deck_name": deck_name, "cards": decklist_message, "creator_name": str(ctx.author)})
-            if response.status_code == 200:
-                await ctx.send(f"Deck '{deck_name}' edited successfully!")
-            else:
-                await ctx.send("Error editing deck.")
+            await ctx.send(
+                f"Please send the new decklist for '{deck_name}' in the format: Card1{{Card2{{Card3... (no extra spaces, braces, or newlines)")
+            try:
+                msg = await bot.wait_for(
+                    'message',
+                    check=lambda m: m.author == ctx.author and m.channel == ctx.channel,
+                    timeout=25.0
+                )
+                decklist_message = msg.content.strip()
+                if (
+                    decklist_message and
+                    not decklist_message.startswith('{') and
+                    not decklist_message.endswith('{') and
+                    '\n' not in decklist_message and
+                    all(part.strip() != '' and '{' not in part for part in decklist_message.split('{'))
+                ):
+                    response = requests.put(
+                        API_URL + "/edit_deck",
+                        json={
+                            "deck_name": deck_name,
+                            "cards": decklist_message,
+                            "creator_name": str(ctx.author)
+                        }
+                    )
+                    if response.status_code == 200:
+                        await ctx.send(f"Deck '{deck_name}' edited successfully!")
+                    else:
+                        await ctx.send("Error editing deck.")
+                else:
+                    await ctx.send("Invalid format. Please use the format: Card1{Card2{Card3...")
+
+            except asyncio.TimeoutError:
+                await ctx.send("You took too long to respond. Please try again.")
         else:
             await ctx.send("You are not the creator of this deck and cannot edit it.")
+
 
 @bot.command(name="botinfo")
 async def botinfo(ctx):
