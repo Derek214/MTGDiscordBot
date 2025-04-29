@@ -82,7 +82,7 @@ async def view_deck(deck_name: str):
     if not deck:
         raise HTTPException(status_code=404, detail="Deck not found")
 
-    card_names = [name.strip() for name in deck.cards.split("{") if name.strip()]
+    card_names = [name.strip() for name in deck.cards.split("|") if name.strip()]
     image_urls = []
 
     for name in card_names:
@@ -107,7 +107,7 @@ async def decklist(deck_name: str):
     if not deck:
         raise HTTPException(status_code=404, detail="Deck not found")
 
-    card_names = [name.strip() for name in deck.cards.split("{") if name.strip()]
+    card_names = [name.strip() for name in deck.cards.split("|") if name.strip()]
     name_list = []
 
     for name in card_names:

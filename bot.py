@@ -59,7 +59,7 @@ async def decklist(ctx, *, deck_name: str):
         deck_list += f"Creator: {deck_data.get('creator_name')}\n"
         for card in deck_data:
             deck_list += f"{card.get('card_name')}  "
-        deck_list = deck_list.replace("{", "\n")
+        deck_list = deck_list.replace("|", "\n")
         await ctx.send(deck_list)
     else:
         await ctx.send("Error retrieving deck data.")
@@ -91,7 +91,7 @@ async def random(ctx):
 @bot.command(name="builddeck")
 async def builddeck(ctx, *, deck_name: str):
     # Wait for Next Sent Message
-    await ctx.send(f"Please send the decklist for '{deck_name}' in the format: Card1" + "{" +"Card 2"+ "{"+"Card3 ...")
+    await ctx.send(f"Please send the decklist for '{deck_name}' in the format: Card1" + "|" +"Card 2"+ "|"+"Card3 ...")
     msg = await bot.wait_for('message', check=lambda message: message.author == ctx.author and message.channel == ctx.channel, timeout=2000.0)
     decklist_message = msg.content
     #API Call To Create Deck
@@ -138,7 +138,7 @@ async def editdeck(ctx, *, deck_name: str):
         creator_name = deck_data.get("creator_name")
         if str(ctx.author) == str(creator_name):
             await ctx.send(
-                f"Please send the new decklist for '{deck_name}' in the format: Card1{{Card2{{Card3... (no extra spaces, braces, or newlines)")
+                f"Please send the new decklist for '{deck_name}' in the format: Card1|Card2|Card3... (no extra spaces, braces, or newlines)")
             try:
                 msg = await bot.wait_for(
                     'message',
@@ -148,10 +148,10 @@ async def editdeck(ctx, *, deck_name: str):
                 decklist_message = msg.content.strip()
                 if (
                     decklist_message and
-                    not decklist_message.startswith('{') and
-                    not decklist_message.endswith('{') and
+                    not decklist_message.startswith('|') and
+                    not decklist_message.endswith('|') and
                     '\n' not in decklist_message and
-                    all(part.strip() != '' and '{' not in part for part in decklist_message.split('{'))
+                    all(part.strip() != '' and '|' not in part for part in decklist_message.split('|'))
                 ):
                     response = requests.put(
                         API_URL + "/edit_deck",
@@ -166,7 +166,7 @@ async def editdeck(ctx, *, deck_name: str):
                     else:
                         await ctx.send("Error editing deck.")
                 else:
-                    await ctx.send("Invalid format. Please use the format: Card1{Card2{Card3...")
+                    await ctx.send("Invalid format. Please use the format: Card1|Card2|Card3...")
 
             except asyncio.TimeoutError:
                 await ctx.send("You took too long to respond. Please try again.")
