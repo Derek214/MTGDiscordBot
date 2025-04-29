@@ -177,11 +177,16 @@ async def editdeck(ctx, *, deck_name: str):
 @bot.command(name="botinfo")
 async def botinfo(ctx):
     commandops = [
-        "/card <card_name> - Get card image",
-        "/deckview <deck_name> - View deck",
-        "/randomcard - Get a random card",
-        "/comidea <colorset> <creaturetype>- Sends new ideas for commander based on colorset and creature type",
+        "Commands:",
+        "/botinfo - Get info about the bot",
+        "/alldecks - View all decks",
         "/builddeck <deck_name> - Build a new deck",
+        "/card <card_name> - Get card image",
+        "/comidea <colorset> <creaturetype>- Sends new ideas for commander based on colorset and creature type",
+        "/deckview <deck_name> - View deck",
+        "/decklist <deck_name> - View decklist",
+        "/random - Get a random card",
+        "/info - Get info about the command used",
         "/editdeck <deck_name> - Edit deck if you created it",
         "/deletedeck <deck_name> - Delete deck if you created it"
     ]
