@@ -103,6 +103,22 @@ async def view_deck(deck_name: str):
 
 @app.get("/decklist")
 async def decklist(deck_name: str):
+    deck = session.query(Deck).filter(Deck.deck_name == deck_name).first()
+    if not deck:
+        raise HTTPException(status_code=404, detail="Deck not found")
+
+    card_names = [name.strip() for name in deck.cards.split("{") if name.strip()]
+    name_list = []
+
+    for name in card_names:
+        name_list.append({
+            "card_name": name
+        })
+
+    return {"cards": name_list, "creator_name": deck.creator_name}
+
+@app.get("/decklist")
+async def decklist(deck_name: str):
     print(deck_name)
 @app.get("/comidea")
 async def newcomideas(
