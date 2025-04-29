@@ -25,7 +25,10 @@ app = FastAPI()
 DB_PATH = "decks.db"
 
 # Regex for valid color sets (e.g., w, ub, wubrg)
-color_regex = re.compile(r"^(?i)(?!.*(.).*\1)[wubrg]{1,5}$")
+try:
+    color_regex = re.compile(r"(?i)^(?!.*(.).*\1)[wubrg]{1,5}$")
+except re.error as e:
+    raise ValueError(f"Invalid regex pattern: {e}")
     
 class CardRequest(BaseModel):
     card_name: str
