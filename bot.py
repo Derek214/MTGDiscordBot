@@ -63,6 +63,30 @@ async def decklist(ctx, *, deck_name: str):
         await ctx.send(deck_list)
     else:
         await ctx.send("Error retrieving deck data.")
+        
+@bot.command(name="decklist")
+async def decklist(ctx, *, deck_name: str):
+    response = requests.get(API_URL + "/decklist", params={"deck_name": deck_name})
+
+    if response.status_code == 200:
+        deck_data = response.json()
+        cards = deck_data.get("cards", [])
+        if not deck_data:
+            await ctx.send("No cards found in this deck.")
+            return
+
+        deck_list = f"Deck Name: {deck_name}\n"
+        deck_list += f"Creator: {deck_data.get('creator_name')}\n\n"
+
+        for card in cards:
+            deck_list += f"{card.get('card_name')}\n"
+
+        await ctx.send(deck_list)
+    elif response.status_code == 404:
+        await ctx.send("Deck not found.")
+    else:
+        await ctx.send("Error retrieving deck data.")
+
 
 @bot.command(name="alldecks")
 async def alldecks(ctx):
