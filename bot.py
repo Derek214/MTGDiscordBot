@@ -46,6 +46,24 @@ async def deckview(ctx, *, deck_name: str):
     else:
         await ctx.send("Error retrieving card data.")
 
+@bot.command(name="decklist")
+async def decklist(ctx, *, deck_name: str):
+    response = requests.get(API_URL + "/decklist", params={"deck_name": deck_name})
+    
+    if response.status_code == 200:
+        deck_data = response.json()
+        if not deck_data:
+            await ctx.send("No cards found in this deck.")
+            return
+        deck_list = f"Deck Name: {deck_name}\n"
+        deck_list += f"Creator: {deck_data.get('creator_name')}\n"
+        for card in deck_data:
+            deck_list += f"{card.get('card_name')}  "
+        deck_list = deck_list.replace("{", "\n")
+        await ctx.send(deck_list)
+    else:
+        await ctx.send("Error retrieving deck data.")
+
 @bot.command(name="alldecks")
 async def alldecks(ctx):
     response = requests.get(API_URL + "/all_decks")
@@ -69,7 +87,6 @@ async def random(ctx):
         await ctx.send(f"{card_image_url}")
     else:
         await ctx.send("Error retrieving random card.")
-
 
 @bot.command(name="builddeck")
 async def builddeck(ctx, *, deck_name: str):

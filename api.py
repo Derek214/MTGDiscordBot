@@ -101,6 +101,9 @@ async def view_deck(deck_name: str):
 
     return {"cards": image_urls, "creator_name": deck.creator_name}
 
+@app.get("/decklist")
+async def decklist(deck_name: str):
+    print(deck_name)
 @app.get("/comidea")
 async def newcomideas(
     colorset: Optional[str] = Query(default=None),
