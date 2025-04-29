@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import requests
+import asyncio
+import time
 
 API_URL = "http://localhost:8000"
 
