@@ -191,7 +191,7 @@ async def botinfo(ctx):
         "/builddeck <deck_name> - Build a new deck",
         "/card <card_name> - Get card image",
         "/comidea <colorset> <creaturetype>- Sends new ideas for commander based on colorset and creature type",
-        "/deckview <deck_name> - View deck",
+        "/viewdeck <deck_name> - View deck",
         "/decklist <deck_name> - View decklist",
         "/random - Get a random card",
         "/info - Get info about the command used",
