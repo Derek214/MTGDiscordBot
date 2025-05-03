@@ -194,7 +194,6 @@ async def botinfo(ctx):
         "/viewdeck <deck_name> - View deck",
         "/decklist <deck_name> - View decklist",
         "/random - Get a random card",
-        "/info - Get info about the command used",
         "/editdeck <deck_name> - Edit deck if you created it",
         "/deletedeck <deck_name> - Delete deck if you created it"
     ]
